@@ -10,7 +10,12 @@ import androidx.navigation.ui.navigateUp
 import androidx.navigation.ui.setupActionBarWithNavController
 import android.view.Menu
 import android.view.MenuItem
+import android.view.View
 import com.stevenhao.ndklearning.databinding.ActivityMainBinding
+import com.stevenhao.ndklearning.utils.ThreadUtils
+import java.io.File
+import java.util.Timer
+import java.util.TimerTask
 
 class MainActivity : AppCompatActivity() {
 
@@ -19,6 +24,7 @@ class MainActivity : AppCompatActivity() {
 
     init {
         System.loadLibrary("ndk-starter")
+        hookPThread()
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -34,12 +40,17 @@ class MainActivity : AppCompatActivity() {
         setupActionBarWithNavController(navController, appBarConfiguration)
 
         binding.fab.setOnClickListener { view ->
-            val jniStr = getStringFromJni()
-            Log.e("MainActivity", "jniStr: $jniStr")
+            startJNIThread()
+        }
+
+        binding.root.findViewById<View>(R.id.button).setOnClickListener {
+            startJNIThread()
         }
     }
 
-    external fun getStringFromJni(): String
+    private external fun startJNIThread(): String
+
+    private external fun hookPThread(): String
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         // Inflate the menu; this adds items to the action bar if it is present.
