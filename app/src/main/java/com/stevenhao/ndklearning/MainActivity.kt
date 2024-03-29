@@ -11,6 +11,7 @@ import androidx.navigation.ui.setupActionBarWithNavController
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
+import com.bytedance.android.bytehook.ByteHook
 import com.stevenhao.ndklearning.databinding.ActivityMainBinding
 import com.stevenhao.ndklearning.utils.ThreadUtils
 import java.io.File
@@ -24,6 +25,7 @@ class MainActivity : AppCompatActivity() {
 
     init {
         System.loadLibrary("ndk-starter")
+        ByteHook.init();
         hookPThread()
     }
 
