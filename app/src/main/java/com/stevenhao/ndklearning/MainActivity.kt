@@ -1,32 +1,52 @@
 package com.stevenhao.ndklearning
 
+import android.content.BroadcastReceiver
+import android.content.Context
+import android.content.Intent
+import android.content.IntentFilter
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
-import com.google.android.material.snackbar.Snackbar
+import android.view.Menu
+import android.view.MenuItem
+import android.view.View
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.navigateUp
 import androidx.navigation.ui.setupActionBarWithNavController
-import android.view.Menu
-import android.view.MenuItem
-import android.view.View
 import com.bytedance.android.bytehook.ByteHook
+import com.stevenhao.ndklearning.activity.SettingActivity
 import com.stevenhao.ndklearning.databinding.ActivityMainBinding
-import com.stevenhao.ndklearning.utils.ThreadUtils
-import java.io.File
-import java.util.Timer
-import java.util.TimerTask
+import com.stevenhao.ndklearning.utils.App
+import com.stevenhao.ndklearning.utils.Constants
+import com.stevenhao.ndklearning.utils.HandlerUtils
+import kotlinx.coroutines.ExecutorCoroutineDispatcher
+import kotlinx.coroutines.newSingleThreadContext
 
 class MainActivity : AppCompatActivity() {
 
     private lateinit var appBarConfiguration: AppBarConfiguration
     private lateinit var binding: ActivityMainBinding
+    private val threadPoolExecutor: ExecutorCoroutineDispatcher = newSingleThreadContext("test");
+
+    private val broadcastReceiver: BroadcastReceiver = object : BroadcastReceiver() {
+        override fun onReceive(context: Context?, intent: Intent?) {
+            val i = context!!.packageManager.getLaunchIntentForPackage(
+                context.packageName
+            )
+            if (i != null) {
+                i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+                startActivity(i)
+                finish()
+            }
+        }
+    }
 
     init {
         System.loadLibrary("ndk-starter")
-        ByteHook.init();
-        hookPThread()
+        App.setRootActivity(this)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -34,20 +54,33 @@ class MainActivity : AppCompatActivity() {
 
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
-
         setSupportActionBar(binding.toolbar)
-
         val navController = findNavController(R.id.nav_host_fragment_content_main)
         appBarConfiguration = AppBarConfiguration(navController.graph)
         setupActionBarWithNavController(navController, appBarConfiguration)
 
         binding.fab.setOnClickListener { view ->
-            startJNIThread()
+            Log.e("stevenhao", "do action")
+            SettingActivity.startActivity(this)
         }
-
         binding.root.findViewById<View>(R.id.button).setOnClickListener {
             startJNIThread()
         }
+
+        binding.root.findViewById<View>(R.id.goto_setting_button).setOnClickListener {
+            SettingActivity.startActivity(this)
+        }
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            registerBroadcast()
+        }
+    }
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    private fun registerBroadcast() {
+        registerReceiver(broadcastReceiver, IntentFilter(Constants.ACTION_RESTART),
+            RECEIVER_NOT_EXPORTED
+        )
     }
 
     private external fun startJNIThread(): String
