@@ -68,7 +68,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         binding.root.findViewById<View>(R.id.goto_setting_button).setOnClickListener {
-            SettingActivity.startActivity(this)
+            hookPThread()
         }
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -86,6 +86,8 @@ class MainActivity : AppCompatActivity() {
     private external fun startJNIThread(): String
 
     private external fun hookPThread(): String
+
+    private external fun stringFromJNI(): String
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         // Inflate the menu; this adds items to the action bar if it is present.

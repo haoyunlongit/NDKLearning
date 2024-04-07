@@ -8,12 +8,17 @@ project("ndk-starter")
 
 find_package(shadowhook REQUIRED CONFIG)
 find_package(bytehook REQUIRED CONFIG)
+
+# 添加文件路径
+file(GLOB starter_srcs
+        "*.cpp"
+        "*.h"
+        "*.hpp"
+        "utils/*.cpp")
+
 add_library(${CMAKE_PROJECT_NAME} SHARED
-        # List C/C++ source files with relative paths to this CMakeLists.txt.
-        native-lib.cpp
-        shadowhook_wrapper.cpp
-        string_utils.cpp
-        inlinehook_wrapper.cpp)
+        ${starter_srcs}
+)
 target_link_libraries(${CMAKE_PROJECT_NAME}
         android
         shadowhook::shadowhook

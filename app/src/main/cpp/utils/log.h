@@ -1,6 +1,9 @@
 #ifndef LOG_H
 #define LOG_H
 
+#define PRINT_LOG
+#define ANDROID
+
 #if defined (PRINT_LOG)
 #if defined(ANDROID)
 #include <android/log.h>
@@ -9,7 +12,7 @@
 #define LOG_TAG ""
 #endif
  
-#define NATIVE_LOG_TAG "aqts_" LOG_TAG
+#define NATIVE_LOG_TAG "starter_" LOG_TAG
 #define LOGE(...)   __android_log_print(ANDROID_LOG_ERROR,NATIVE_LOG_TAG,__VA_ARGS__)
 #define LOGW(...)   __android_log_print(ANDROID_LOG_WARN,NATIVE_LOG_TAG, __VA_ARGS__)
 #define LOGD(...)   __android_log_print(ANDROID_LOG_DEBUG,NATIVE_LOG_TAG, __VA_ARGS__)
