@@ -13,15 +13,25 @@ find_package(bytehook REQUIRED CONFIG)
 file(GLOB starter_srcs
         "*.cpp"
         "*.h"
-        "*.hpp"
+        "test/*.cpp"
         "utils/*.cpp")
 
+# 添加动态库
 add_library(${CMAKE_PROJECT_NAME} SHARED
         ${starter_srcs}
 )
+
+# 添加链接库
 target_link_libraries(${CMAKE_PROJECT_NAME}
         android
         shadowhook::shadowhook
         bytehook::bytehook
         log)
+
+# 添加头文件路径
+target_include_directories(${CMAKE_PROJECT_NAME} PRIVATE
+        ${CMAKE_CURRENT_SOURCE_DIR}
+        ${CMAKE_CURRENT_SOURCE_DIR}/utils
+        ${CMAKE_CURRENT_SOURCE_DIR}/test)
+
 
