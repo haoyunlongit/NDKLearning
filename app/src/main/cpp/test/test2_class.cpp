@@ -4,7 +4,6 @@
 
 #include "test2_class.h"
 
-
-int test2(int a, int b) {
+int test2_class::test2(int a, int b) {
     return a + b;
 }

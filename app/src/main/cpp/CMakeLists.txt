@@ -13,6 +13,9 @@ find_package(bytehook REQUIRED CONFIG)
 file(GLOB starter_srcs
         "*.cpp"
         "*.h"
+        "byopen/*.cpp"
+        "byopen/*.h"
+        "byopen/byopen_android.c"
         "test/*.cpp"
         "utils/*.cpp")
 
@@ -31,6 +34,7 @@ target_link_libraries(${CMAKE_PROJECT_NAME}
 # 添加头文件路径
 target_include_directories(${CMAKE_PROJECT_NAME} PRIVATE
         ${CMAKE_CURRENT_SOURCE_DIR}
+        ${CMAKE_CURRENT_SOURCE_DIR}/byopen
         ${CMAKE_CURRENT_SOURCE_DIR}/utils
         ${CMAKE_CURRENT_SOURCE_DIR}/test)
 

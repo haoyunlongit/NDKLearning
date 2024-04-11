@@ -24,3 +24,9 @@ Java_com_stevenhao_ndklearning_MainActivity_stringFromJNI(JNIEnv *env, jobject t
     std::string hello = string_utils::get_hello_string(0);
     return env->NewStringUTF(hello.c_str());
 }
+
+extern "C" jstring
+Java_com_stevenhao_ndklearning_MainActivity_showGJdwpAllowed(JNIEnv *env, jobject thiz) {
+    show_message();
+    return env->NewStringUTF("hook pthread_exit success");
+}

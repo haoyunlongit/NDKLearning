@@ -71,6 +71,10 @@ class MainActivity : AppCompatActivity() {
             hookPThread()
         }
 
+        binding.root.findViewById<View>(R.id.goto_setting_button_2).setOnClickListener {
+            showGJdwpAllowed()
+        }
+
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             registerBroadcast()
         }
@@ -88,6 +92,8 @@ class MainActivity : AppCompatActivity() {
     private external fun hookPThread(): String
 
     private external fun stringFromJNI(): String
+
+    private external fun showGJdwpAllowed(): String
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         // Inflate the menu; this adds items to the action bar if it is present.
