@@ -6,9 +6,6 @@
 cmake_minimum_required(VERSION 3.22.1)
 project("ndk-starter")
 
-find_package(shadowhook REQUIRED CONFIG)
-find_package(bytehook REQUIRED CONFIG)
-
 # 添加文件路径
 file(GLOB starter_srcs
         "*.cpp"
@@ -17,6 +14,8 @@ file(GLOB starter_srcs
         "byopen/*.h"
         "byopen/byopen_android.c"
         "test/*.cpp"
+        "utils/*.h"
+        "utils/*.cc"
         "utils/*.cpp")
 
 # 添加动态库
@@ -27,8 +26,6 @@ add_library(${CMAKE_PROJECT_NAME} SHARED
 # 添加链接库
 target_link_libraries(${CMAKE_PROJECT_NAME}
         android
-        shadowhook::shadowhook
-        bytehook::bytehook
         log)
 
 # 添加头文件路径

@@ -2,7 +2,6 @@ package com.stevenhao.ndklearning.utils
 
 import android.app.Activity
 import android.app.Application
-import com.bytedance.android.bytehook.ByteHook
 
 /**
  * @Autor : yunlong20
@@ -33,9 +32,6 @@ class App : Application() {
         fun getResources() = instance.resources
     }
 
-    init {
-        ByteHook.init()
-    }
 
     override fun onCreate() {
         super.onCreate()

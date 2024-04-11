@@ -4,7 +4,6 @@
 
 #include "inlinehook_wrapper.h"
 #include <jni.h>
-#include <bytehook.h>
 #include <bits/pthread_types.h>
 #include <android/log.h>
 #include <string.h>
@@ -16,6 +15,7 @@
 #include <byopen/byopen.h>
 #include <link.h>
 #include "utils/log.h"
+#include "utils/aqts_library_loader.h"
 
 int
 my_pthread_create(pthread_t *thread_out, pthread_attr_t const *attr, void *(*start_routine)(void *),
@@ -31,18 +31,18 @@ int get_gJdwpAllowed();
 static const char* TAG = "stevenhao";
 
 void hook_thread2() {
-    //hook pthread_exit lib.so
-    bytehook_hook_all(nullptr, "pthread_exit", (void *) my_pthread_create, nullptr, nullptr);
 }
 
 void show_message() {
 //    int gDwp = get_gJdwpAllowed();
-    int t = get_gJdwpAllowed();
-    Logger::debug("stevenhao", "gJdwpAllowed: %i\n", t);
-    set_gJdwpAllowed(0);
-    t = get_gJdwpAllowed();
-    Logger::debug("stevenhao", "change gJdwpAllowed: %i\n", t);
-    set_gJdwpAllowed(1);
+//    int t = get_gJdwpAllowed();
+//    Logger::debug("stevenhao", "gJdwpAllowed: %i\n", t);
+//    set_gJdwpAllowed(0);
+//    t = get_gJdwpAllowed();
+//    Logger::debug("stevenhao", "change gJdwpAllowed: %i\n", t);
+//    set_gJdwpAllowed(1);
+//    aqts::test();
+      aqts::test123();
 }
 
 // Function to get the offset of gJdwpAllowed symbol
@@ -91,14 +91,4 @@ void set_gJdwpAllowed(int allowed) {
     Logger::debug(TAG,"found SetJdwpAllowed symbol");
     funcPtr(allowed);
     by_dlclose(handle);
-}
-
-
-int
-my_pthread_create(pthread_t *thread_out, pthread_attr_t const *attr, void *(*start_routine)(void *),
-                  void *arg) {
-    BYTEHOOK_STACK_SCOPE();
-    Logger::debug(TAG,"inline hook : hook success");
-    int result = BYTEHOOK_CALL_PREV(my_pthread_create, thread_out, attr, start_routine, arg);
-    return result;
 }

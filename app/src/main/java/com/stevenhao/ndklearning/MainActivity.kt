@@ -16,12 +16,10 @@ import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.navigateUp
 import androidx.navigation.ui.setupActionBarWithNavController
-import com.bytedance.android.bytehook.ByteHook
 import com.stevenhao.ndklearning.activity.SettingActivity
 import com.stevenhao.ndklearning.databinding.ActivityMainBinding
 import com.stevenhao.ndklearning.utils.App
 import com.stevenhao.ndklearning.utils.Constants
-import com.stevenhao.ndklearning.utils.HandlerUtils
 import kotlinx.coroutines.ExecutorCoroutineDispatcher
 import kotlinx.coroutines.newSingleThreadContext
 
