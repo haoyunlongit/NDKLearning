@@ -13,6 +13,9 @@ file(GLOB starter_srcs
         "byopen/*.cpp"
         "byopen/*.h"
         "byopen/byopen_android.c"
+        "utils/jni/jni_android.cpp"
+        "utils/jni/jni_android.h"
+        "linker/*.cpp"
         "test/*.cpp"
         "utils/*.h"
         "utils/*.cc"
@@ -33,6 +36,7 @@ target_include_directories(${CMAKE_PROJECT_NAME} PRIVATE
         ${CMAKE_CURRENT_SOURCE_DIR}
         ${CMAKE_CURRENT_SOURCE_DIR}/byopen
         ${CMAKE_CURRENT_SOURCE_DIR}/utils
+        ${CMAKE_CURRENT_SOURCE_DIR}/utils/jni
         ${CMAKE_CURRENT_SOURCE_DIR}/test)
 
 

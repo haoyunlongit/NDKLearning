@@ -17,10 +17,6 @@
 #include "utils/log.h"
 #include "utils/aqts_library_loader.h"
 
-int
-my_pthread_create(pthread_t *thread_out, pthread_attr_t const *attr, void *(*start_routine)(void *),
-                  void *arg);
-
 typedef void (*SetJdwpAllowedFunc)(bool);
 typedef bool (*IsJdwpAllowed)();
 
@@ -34,15 +30,13 @@ void hook_thread2() {
 }
 
 void show_message() {
-//    int gDwp = get_gJdwpAllowed();
-//    int t = get_gJdwpAllowed();
-//    Logger::debug("stevenhao", "gJdwpAllowed: %i\n", t);
-//    set_gJdwpAllowed(0);
-//    t = get_gJdwpAllowed();
-//    Logger::debug("stevenhao", "change gJdwpAllowed: %i\n", t);
-//    set_gJdwpAllowed(1);
-//    aqts::test();
-      aqts::test123();
+    int gDwp = get_gJdwpAllowed();
+    int t = get_gJdwpAllowed();
+    Logger::debug("stevenhao", "gJdwpAllowed: %i\n", t);
+    set_gJdwpAllowed(0);
+    t = get_gJdwpAllowed();
+    Logger::debug("stevenhao", "change gJdwpAllowed: %i\n", t);
+    set_gJdwpAllowed(1);
 }
 
 // Function to get the offset of gJdwpAllowed symbol

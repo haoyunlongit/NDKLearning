@@ -5,10 +5,18 @@
 
 #include "log.h"
 #include "aqts_library_loader.h"
+#include "jni_android.h"
+#include "linker/art_helper.h"
+
 namespace aqts {
 
     jint AqtsOnLoad(JavaVM *vm, void *reserved) {
-        Logger::debug("stevenhao", "AqtsOnLoad success");
+        basejni::InitVM(vm);
+
+        auto vm_ext = reinterpret_cast<JavaVMExt*>(vm);
+        void * runtime_instance_ = vm_ext->runtime;
+
+        Logger::debug("stevenhao", "AqtsOnLoad success3333 %p", runtime_instance_);
         return JNI_VERSION_1_6;
     }
 
