@@ -5,6 +5,8 @@ import android.os.Build;
 import android.os.Debug;
 import android.util.Log;
 
+import com.stevenhao.ndklearning.utils.App;
+
 import java.io.File;
 import java.lang.reflect.Method;
 import java.nio.file.Files;
@@ -51,7 +53,20 @@ public class JVMHelper {
                 Log.d("stevenhao", agentLibSo.getAbsolutePath() + "," + context.getPackageCodePath());
 
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+                    ///判断当前是否是debug环境
+                    boolean gjdwpAllowed = getGJdwpAllowed();
+                    Log.d("stevenhao", "gjdwp allowed is " + gjdwpAllowed);
+                    if (!gjdwpAllowed) {
+                        Log.d("stevenhao", "set gjdwp allowed");
+                        setGJdwpAllowed(true);
+                    }
                     Debug.attachJvmtiAgent(agentLibSo.getAbsolutePath(), null, classLoader);
+                    gjdwpAllowed = getGJdwpAllowed();
+                    Log.d("stevenhao", "gjdwp allowed is " + gjdwpAllowed);
+                    if (!gjdwpAllowed) {
+                        Log.d("stevenhao", "set gjdwp disallowed");
+                        setGJdwpAllowed(false);
+                    }
                 } else {
                     try {
                         Class vmDebugClazz = Class.forName("dalvik.system.VMDebug");
@@ -67,4 +82,9 @@ public class JVMHelper {
             Log.e("stevenhao", "init jvmti error" + ex.toString());
         }
     }
+
+    static native boolean getGJdwpAllowed();
+
+    static native void setGJdwpAllowed(boolean allowed);
+
 }

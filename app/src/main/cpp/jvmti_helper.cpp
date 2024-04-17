@@ -1,8 +1,7 @@
 //
-// Created by stevenhao on 3/28/24.
+// Created by stevenhao on 4/17/24.
 //
-
-#include "inlinehook_wrapper.h"
+// Function to get the offset of gJdwpAllowed symbol
 #include <jni.h>
 #include <bits/pthread_types.h>
 #include <android/log.h>
@@ -20,26 +19,8 @@
 typedef void (*SetJdwpAllowedFunc)(bool);
 typedef bool (*IsJdwpAllowed)();
 
-void set_gJdwpAllowed(int allowed);
-
-int get_gJdwpAllowed();
-
 static const char* TAG = "stevenhao";
 
-void hook_thread2() {
-}
-
-void show_message() {
-    int gDwp = get_gJdwpAllowed();
-    int t = get_gJdwpAllowed();
-    Logger::info("stevenhao", "gJdwpAllowed: %i\n", t);
-    set_gJdwpAllowed(0);
-    t = get_gJdwpAllowed();
-    Logger::info("stevenhao", "change gJdwpAllowed: %i\n", t);
-    set_gJdwpAllowed(1);
-}
-
-// Function to get the offset of gJdwpAllowed symbol
 int get_gJdwpAllowed() {
     by_char_t const* libraryName_cstr = "libart.so";
     by_pointer_t handle = by_dlopen(libraryName_cstr, BY_RTLD_NOW | BY_RTLD_LAZY);

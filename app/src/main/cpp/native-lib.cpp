@@ -1,9 +1,9 @@
 #include <jni.h>
 #include <string>
 #include "string_utils.h"
-#include "inlinehook_wrapper.h"
 #include "jvmti.h"
 #include "log.h"
+#include "jvmti_helper.h"
 
 extern "C" jstring
 Java_com_stevenhao_ndklearning_MainActivity_hookPThread(JNIEnv *env, jobject thiz) {
@@ -23,7 +23,6 @@ Java_com_stevenhao_ndklearning_MainActivity_stringFromJNI(JNIEnv *env, jobject t
 
 extern "C" jstring
 Java_com_stevenhao_ndklearning_MainActivity_showGJdwpAllowed(JNIEnv *env, jobject thiz) {
-    show_message();
     return env->NewStringUTF("hook pthread_exit success");
 }
 
@@ -31,12 +30,12 @@ Java_com_stevenhao_ndklearning_MainActivity_showGJdwpAllowed(JNIEnv *env, jobjec
 void ObjectAllocCallback(jvmtiEnv *jvmti, JNIEnv *jni,
                          jthread thread, jobject object,
                          jclass klass, jlong size) {
-    if (size > 10000) {
+    if (size > 200) {
         Logger::info("stevenhao", "=========================================");
         ////打印对象的基本信息
         char *signature;
         jvmti->GetClassSignature(klass, &signature, nullptr);
-        Logger::info("stevenhao", "signature:%s", signature);
+        Logger::info("stevenhao", "signature:%s size: %d", signature, size);
         jvmti->Deallocate(reinterpret_cast<unsigned char *>(signature));
 
         ////打印类名称
@@ -140,3 +139,15 @@ void SetAllCapabilities(jvmtiEnv *jvmti) {
     error = jvmti->AddCapabilities(&caps);
 }
 
+
+extern "C"
+JNIEXPORT jboolean JNICALL
+Java_com_stevenhao_ndklearning_JVMHelper_getGJdwpAllowed(JNIEnv *env, jclass clazz) {
+    return get_gJdwpAllowed();
+}
+extern "C"
+JNIEXPORT void JNICALL
+Java_com_stevenhao_ndklearning_JVMHelper_setGJdwpAllowed(JNIEnv *env, jclass clazz,
+                                                         jboolean allowed) {
+    set_gJdwpAllowed(allowed);
+}

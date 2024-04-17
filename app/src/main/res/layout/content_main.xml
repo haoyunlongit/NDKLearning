@@ -32,7 +32,7 @@
         android:id="@+id/goto_setting_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="94dp"
+        android:layout_marginTop="30dp"
         android:text="跳转设置页"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -42,11 +42,19 @@
     android:id="@+id/goto_setting_button_2"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:layout_marginTop="94dp"
+    android:layout_marginTop="30dp"
     android:text="获取gJdwpAllowed值"
     app:layout_constraintEnd_toEndOf="parent"
     app:layout_constraintStart_toStartOf="parent"
     app:layout_constraintTop_toBottomOf="@+id/goto_setting_button" />
-
+    <Button
+        android:id="@+id/goto_setting_button_3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="94dp"
+        android:text="大对象创建"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/goto_setting_button_2" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

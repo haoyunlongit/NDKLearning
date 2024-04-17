@@ -2,6 +2,12 @@ package com.stevenhao.ndklearning.utils
 
 import android.app.Activity
 import android.app.Application
+import android.content.pm.ApplicationInfo
+
+import java.security.AccessController.getContext
+
+
+
 
 /**
  * @Autor : yunlong20
@@ -35,5 +41,9 @@ class App : Application() {
 
     override fun onCreate() {
         super.onCreate()
+    }
+
+    open fun isDebug(): Boolean {
+        return 0 != applicationInfo.flags and ApplicationInfo.FLAG_DEBUGGABLE
     }
 }

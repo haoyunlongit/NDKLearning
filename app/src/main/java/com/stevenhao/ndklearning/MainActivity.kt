@@ -4,6 +4,7 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
+import android.graphics.Bitmap
 import android.os.Build
 import android.os.Bundle
 import android.os.Debug
@@ -31,7 +32,8 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var appBarConfiguration: AppBarConfiguration
     private lateinit var binding: ActivityMainBinding
-    private val threadPoolExecutor: ExecutorCoroutineDispatcher = newSingleThreadContext("test");
+    private val threadPoolExecutor: ExecutorCoroutineDispatcher = newSingleThreadContext("test")
+    private val bitObjectArray: HashSet<Bitmap> = HashSet();
 
     private val broadcastReceiver: BroadcastReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {
@@ -79,9 +81,18 @@ class MainActivity : AppCompatActivity() {
             showGJdwpAllowed()
         }
 
+        binding.root.findViewById<View>(R.id.goto_setting_button_3).setOnClickListener {
+            createBigObject()
+        }
+
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             registerBroadcast()
         }
+    }
+
+    fun createBigObject() {
+        var bigObject: Bitmap = Bitmap.createBitmap(100, 100, Bitmap.Config.ARGB_8888)
+        bitObjectArray.add(bigObject)
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
