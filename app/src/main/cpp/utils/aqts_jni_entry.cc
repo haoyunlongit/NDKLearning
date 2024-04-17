@@ -6,7 +6,7 @@
 
 // This is called by the VM when the shared library is first loaded.
 extern "C" jint JNI_OnLoad(JavaVM* vm, void* reserved) {
-    Logger::debug("stevenhao", "JNI_OnLoad success");
+    Logger::info("stevenhao", "JNI_OnLoad success");
     return aqts::AqtsOnLoad(vm, reserved);
 }
 

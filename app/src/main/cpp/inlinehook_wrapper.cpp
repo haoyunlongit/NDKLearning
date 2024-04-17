@@ -32,10 +32,10 @@ void hook_thread2() {
 void show_message() {
     int gDwp = get_gJdwpAllowed();
     int t = get_gJdwpAllowed();
-    Logger::debug("stevenhao", "gJdwpAllowed: %i\n", t);
+    Logger::info("stevenhao", "gJdwpAllowed: %i\n", t);
     set_gJdwpAllowed(0);
     t = get_gJdwpAllowed();
-    Logger::debug("stevenhao", "change gJdwpAllowed: %i\n", t);
+    Logger::info("stevenhao", "change gJdwpAllowed: %i\n", t);
     set_gJdwpAllowed(1);
 }
 
@@ -46,20 +46,20 @@ int get_gJdwpAllowed() {
     if (handle == NULL) {
         const char* error = dlerror();
         if (error != NULL) {
-            Logger::debug(TAG, "Failed to open libart.so: %s", error);
+            Logger::info(TAG, "Failed to open libart.so: %s", error);
         } else {
-            Logger::debug(TAG, "Failed to open libart.so");
+            Logger::info(TAG, "Failed to open libart.so");
         }
     }
-    Logger::debug(TAG, "handle point %p", handle);
+    Logger::info(TAG, "handle point %p", handle);
 
     IsJdwpAllowed funcPtr = reinterpret_cast<IsJdwpAllowed>(by_dlsym(handle, "_ZN3art3Dbg13IsJdwpAllowedEv"));
     if (funcPtr == NULL) {
-        Logger::debug(TAG,"not found IsJdwpAllowed symbol");
+        Logger::info(TAG,"not found IsJdwpAllowed symbol");
         by_dlclose(handle);
         return 0;
     }
-    Logger::debug(TAG,"found IsJdwpAllowed symbol");
+    Logger::info(TAG,"found IsJdwpAllowed symbol");
     return funcPtr();
 }
 
@@ -69,20 +69,20 @@ void set_gJdwpAllowed(int allowed) {
     if (handle == NULL) {
         const char* error = dlerror();
         if (error != NULL) {
-            Logger::debug(TAG, "Failed to open libart.so: %s", error);
+            Logger::info(TAG, "Failed to open libart.so: %s", error);
         } else {
-            Logger::debug(TAG, "Failed to open libart.so");
+            Logger::info(TAG, "Failed to open libart.so");
         }
     }
-    Logger::debug(TAG, "handle point %p", handle);
+    Logger::info(TAG, "handle point %p", handle);
 
     SetJdwpAllowedFunc funcPtr = reinterpret_cast<SetJdwpAllowedFunc>(by_dlsym(handle, "_ZN3art3Dbg14SetJdwpAllowedEb"));
     if (funcPtr == NULL) {
-        Logger::debug(TAG,"not found SetJdwpAllowed symbol");
+        Logger::info(TAG,"not found SetJdwpAllowed symbol");
         by_dlclose(handle);
         return;
     }
-    Logger::debug(TAG,"found SetJdwpAllowed symbol");
+    Logger::info(TAG,"found SetJdwpAllowed symbol");
     funcPtr(allowed);
     by_dlclose(handle);
 }

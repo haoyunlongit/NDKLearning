@@ -6,6 +6,7 @@ import android.content.Intent
 import android.content.IntentFilter
 import android.os.Build
 import android.os.Bundle
+import android.os.Debug
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
@@ -22,6 +23,9 @@ import com.stevenhao.ndklearning.utils.App
 import com.stevenhao.ndklearning.utils.Constants
 import kotlinx.coroutines.ExecutorCoroutineDispatcher
 import kotlinx.coroutines.newSingleThreadContext
+import java.io.File
+import java.nio.file.Files
+import java.nio.file.Paths
 
 class MainActivity : AppCompatActivity() {
 
@@ -56,6 +60,8 @@ class MainActivity : AppCompatActivity() {
         val navController = findNavController(R.id.nav_host_fragment_content_main)
         appBarConfiguration = AppBarConfiguration(navController.graph)
         setupActionBarWithNavController(navController, appBarConfiguration)
+
+        initJVMTI()
 
         binding.fab.setOnClickListener { view ->
             Log.e("stevenhao", "do action")
@@ -92,6 +98,10 @@ class MainActivity : AppCompatActivity() {
     private external fun stringFromJNI(): String
 
     private external fun showGJdwpAllowed(): String
+
+    private fun initJVMTI() {
+        JVMHelper.init(this);
+    }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         // Inflate the menu; this adds items to the action bar if it is present.

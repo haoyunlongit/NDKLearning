@@ -20,13 +20,13 @@ namespace basejni {
 
     JNIEnv *AttachCurrentThread() {
         if(!g_jvm) {
-            Logger::debug("steven", "AttachCurrentThread failed! becasue:g_jvm == NULL");
+            Logger::info("steven", "AttachCurrentThread failed! becasue:g_jvm == NULL");
             return NULL;
         }
         JNIEnv *env = NULL;
         jint ret = g_jvm->AttachCurrentThread(&env, NULL);
         if (ret < 0) {
-            Logger::debug("steven", "AttachCurrentThread failed! becasue: g_jvm->AttachCurrentThread failed");
+            Logger::info("steven", "AttachCurrentThread failed! becasue: g_jvm->AttachCurrentThread failed");
             return NULL;
         }
         return env;
@@ -34,7 +34,7 @@ namespace basejni {
 
     jint GetEnv(void** env) {
         if(!g_jvm) {
-            Logger::debug("stevenhao", "GetEnv failed! becasue:g_jvm == NULL");
+            Logger::info("stevenhao", "GetEnv failed! becasue:g_jvm == NULL");
             return JNI_ERR;
         }
         return g_jvm->GetEnv(env,JNI_VERSION_1_2);
