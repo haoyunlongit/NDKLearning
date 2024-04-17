@@ -7,11 +7,20 @@
 
 namespace {
     JavaVM *g_jvm = NULL;
+    jvmtiEnv *g_jvmti = NULL;
 }
 
 namespace basejni {
     void InitVM(JavaVM *vm) {
         g_jvm = vm;
+    }
+
+    void setJVMTIEnv(jvmtiEnv *env) {
+        g_jvmti = env;
+    }
+
+    jvmtiEnv *getJVMTIEnv() {
+        return g_jvmti;
     }
 
     JavaVM *GetVM(){

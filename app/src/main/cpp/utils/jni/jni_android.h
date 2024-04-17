@@ -5,11 +5,16 @@
 #ifndef NDKLEARNING_JNI_ANDROID_H
 #define NDKLEARNING_JNI_ANDROID_H
 #include <jni.h>
+#include "jvmti.h"
 
 namespace basejni {
     void InitVM(JavaVM *vm);
 
     JavaVM *GetVM();
+
+    void setJVMTIEnv(jvmtiEnv *env);
+
+    jvmtiEnv *getJVMTIEnv();
 
     JNIEnv *AttachCurrentThread();
 

@@ -33,7 +33,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var appBarConfiguration: AppBarConfiguration
     private lateinit var binding: ActivityMainBinding
     private val threadPoolExecutor: ExecutorCoroutineDispatcher = newSingleThreadContext("test")
-    private val bitObjectArray: HashSet<Bitmap> = HashSet();
+    private val bitObjectArray: HashSet<MyString> = HashSet();
 
     private val broadcastReceiver: BroadcastReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {
@@ -78,7 +78,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         binding.root.findViewById<View>(R.id.goto_setting_button_2).setOnClickListener {
-            showGJdwpAllowed()
+            stringFromJNI()
         }
 
         binding.root.findViewById<View>(R.id.goto_setting_button_3).setOnClickListener {
@@ -91,8 +91,8 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun createBigObject() {
-        var bigObject: Bitmap = Bitmap.createBitmap(100, 100, Bitmap.Config.ARGB_8888)
-        bitObjectArray.add(bigObject)
+        var MyString = MyString()
+        bitObjectArray.add(MyString)
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
@@ -109,6 +109,8 @@ class MainActivity : AppCompatActivity() {
     private external fun stringFromJNI(): String
 
     private external fun showGJdwpAllowed(): String
+
+    private external fun scanMemory()
 
     private fun initJVMTI() {
         JVMHelper.init(this);
