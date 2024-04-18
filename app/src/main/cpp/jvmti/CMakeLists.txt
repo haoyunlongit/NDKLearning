@@ -11,9 +11,8 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -frtti -Wall -Wno-unused-para
 file(GLOB jvmti_srcs
         "*.cpp"
         "*.h"
-        "byopen/*.cpp"
         "byopen/*.h"
-        "byopen/byopen_android.c")
+        "byopen/*.c")
 
 # 添加动态库
 add_library("jvmti" SHARED

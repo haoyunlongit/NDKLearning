@@ -11,7 +11,6 @@
 #include <stdarg.h>
 #include <dlfcn.h>
 #include <sys/mman.h>
-#include "byopen/byopen.h"
 #include <link.h>
 #include "jvmti_log.h"
 #include "jvmti.h"
@@ -19,6 +18,8 @@
 #include "mem_object_info.h"
 #include "jvmti_helper.h"
 #include "jvmti_utils.h"
+#include "byopen/prefix.h"
+#include "byopen/byopen.h"
 
 typedef void (*SetJdwpAllowedFunc)(bool);
 typedef bool (*IsJdwpAllowed)();

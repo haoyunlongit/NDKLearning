@@ -114,13 +114,8 @@ class MainActivity : AppCompatActivity() {
     private external fun scanMemory()
 
     private fun initJVMTI() {
-        val findLibrary =
-            ClassLoader::class.java.getDeclaredMethod("findLibrary", String::class.java)
-        val jvmtiAgentLibPath = findLibrary.invoke(classLoader, "ndk-starter") as String
-        System.load(jvmtiAgentLibPath)
+        System.loadLibrary("ndk-starter")
         JVMHelper.init(this)
-
-        var temp: String
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {

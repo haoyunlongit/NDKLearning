@@ -13,9 +13,14 @@ file(GLOB starter_srcs
         "*.h"
         "utils/jni/jni_android.cpp"
         "utils/jni/jni_android.h"
+        "jvmti/byopen/*.cpp"
+        "jvmti/byopen/*.h"
+        "jvmti/byopen/*.c"
         "linker/*.cpp"
         "test/*.cpp"
         "utils/*.h"
+        "jvmti/*.cpp"
+        "jvmti/*.h"
         "utils/*.cc"
         "utils/*.cpp")
 
@@ -35,6 +40,7 @@ add_subdirectory(jvmti)
 # 添加头文件路径
 target_include_directories(${CMAKE_PROJECT_NAME} PRIVATE
         ${CMAKE_CURRENT_SOURCE_DIR}
+        ${CMAKE_CURRENT_SOURCE_DIR}/jvmti
         ${CMAKE_CURRENT_SOURCE_DIR}/utils
         ${CMAKE_CURRENT_SOURCE_DIR}/utils/jni
         ${CMAKE_CURRENT_SOURCE_DIR}/test)
