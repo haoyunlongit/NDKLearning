@@ -2,7 +2,6 @@
 // Created by stevenhao on 4/15/24.
 //
 
-#include "jni/GcRootMock.h"
 #include "MockCompatFramework.h"
 #include <stdint.h>
 #include <string>

@@ -4,10 +4,8 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
-import android.graphics.Bitmap
 import android.os.Build
 import android.os.Bundle
-import android.os.Debug
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
@@ -24,9 +22,6 @@ import com.stevenhao.ndklearning.utils.App
 import com.stevenhao.ndklearning.utils.Constants
 import kotlinx.coroutines.ExecutorCoroutineDispatcher
 import kotlinx.coroutines.newSingleThreadContext
-import java.io.File
-import java.nio.file.Files
-import java.nio.file.Paths
 
 class MainActivity : AppCompatActivity() {
 
@@ -49,7 +44,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     init {
-        System.loadLibrary("ndk-starter")
+//        System.loadLibrary("ndk-starter")
         App.setRootActivity(this)
     }
 
@@ -78,7 +73,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         binding.root.findViewById<View>(R.id.goto_setting_button_2).setOnClickListener {
-            stringFromJNI()
+            scanMemory()
         }
 
         binding.root.findViewById<View>(R.id.goto_setting_button_3).setOnClickListener {
@@ -113,6 +108,7 @@ class MainActivity : AppCompatActivity() {
     private external fun scanMemory()
 
     private fun initJVMTI() {
+        System.loadLibrary("ndk-starter")
         JVMHelper.init(this);
     }
 

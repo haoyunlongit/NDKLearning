@@ -30,7 +30,7 @@ public class JVMHelper {
                 packageCodePath = context.getPackageCodePath();
                 ClassLoader classLoader = context.getClassLoader();
                 Method findLibrary = ClassLoader.class.getDeclaredMethod("findLibrary", String.class);
-                String jvmtiAgentLibPath = (String) findLibrary.invoke(classLoader, "ndk-starter");
+                String jvmtiAgentLibPath = (String) findLibrary.invoke(classLoader, "jvmti");
                 //copy lib to /data/data/com.dodola.jvmti/files/jvmti
                 if (jvmtiAgentLibPath == null) {
                     Log.e("stevenhao", "not find jvmtiAgentLibPath");
@@ -50,8 +50,8 @@ public class JVMHelper {
                 }
                 Files.copy(Paths.get(new File(jvmtiAgentLibPath).getAbsolutePath()), Paths.get((agentLibSo).getAbsolutePath()));
 
+                System.load(agentLibSo.getAbsolutePath());
                 Log.d("stevenhao", agentLibSo.getAbsolutePath() + "," + context.getPackageCodePath());
-
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
                     ///判断当前是否是debug环境
                     boolean gjdwpAllowed = getGJdwpAllowed();

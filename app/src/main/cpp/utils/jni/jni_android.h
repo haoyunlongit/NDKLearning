@@ -5,7 +5,7 @@
 #ifndef NDKLEARNING_JNI_ANDROID_H
 #define NDKLEARNING_JNI_ANDROID_H
 #include <jni.h>
-#include "jvmti.h"
+#include "jvmti/jvmti.h"
 
 namespace basejni {
     void InitVM(JavaVM *vm);

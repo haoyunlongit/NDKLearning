@@ -9,8 +9,6 @@
 #include "linker/art_helper.h"
 #include "test2_class.h"
 #include "runtime_mock.h"
-#include "prefix.h"
-#include "byopen.h"
 #include <string>
 #include <iostream>
 #include <dlfcn.h>
@@ -21,7 +19,7 @@ namespace aqts {
 
     template<typename T>
     static int find_offset(void* _base, size_t _size, T _target);
-    static void print_data(void* _base, size_t _size);
+//    static void print_data(void* _base, size_t _size);
     void* getRuntime();
 
     jint AqtsOnLoad(JavaVM *vm, void *reserved) {
@@ -29,7 +27,6 @@ namespace aqts {
 
         auto vm_ext = reinterpret_cast<JavaVMExt*>(vm);
         void * runtime_instance_ = vm_ext->runtime;
-        void * runtime_instance_2 = getRuntime();
         Logger::info("stevenhao", "runtime_instance_ %p", runtime_instance_);
 
         /// 获取target_sdk_version
@@ -63,22 +60,22 @@ namespace aqts {
         return JNI_VERSION_1_6;
     }
 
-    void* getRuntime() {
-        by_char_t const* libraryName_cstr = "libart.so";
-        by_pointer_t handle = by_dlopen(libraryName_cstr, BY_RTLD_NOW | BY_RTLD_LAZY);
-        if (handle == NULL) {
-            const char* error = dlerror();
-            if (error != NULL) {
-                Logger::info("stevenhao", "Failed to open libart.so: %s", error);
-            } else {
-                Logger::info("stevenhao", "Failed to open libart.so");
-            }
-        }
-        Logger::info("stevenhao", "handle point %p", handle);
-        void** runtime_obj = reinterpret_cast<void**>(by_dlsym(handle,
-                                                               sym_runtime_instance));
-        return *runtime_obj;
-    }
+//    void* getRuntime() {
+//        by_char_t const* libraryName_cstr = "libart.so";
+//        by_pointer_t handle = by_dlopen(libraryName_cstr, BY_RTLD_NOW | BY_RTLD_LAZY);
+//        if (handle == NULL) {
+//            const char* error = dlerror();
+//            if (error != NULL) {
+//                Logger::info("stevenhao", "Failed to open libart.so: %s", error);
+//            } else {
+//                Logger::info("stevenhao", "Failed to open libart.so");
+//            }
+//        }
+//        Logger::info("stevenhao", "handle point %p", handle);
+//        void** runtime_obj = reinterpret_cast<void**>(by_dlsym(handle,
+//                                                               sym_runtime_instance));
+//        return *runtime_obj;
+//    }
 
     void AqtsOnUnLoad(JavaVM *jvm, void *reserved) {
         //base::android::LibraryLoaderExitHook();
@@ -95,21 +92,21 @@ namespace aqts {
         return -1;
     }
 
-    /// 打印连续地址的二进制数据 拼接位char* 打印以16进制打印
-    static void print_data(void* _base, size_t _size) {
-        for(auto i = 0; i < _size; i += 16) {
-            auto current = reinterpret_cast<char*>(_base) + i;
-            char buffer[64] = {0};
-            for(auto j = 0; j < 16; j++) {
-                if(i + j < _size) {
-                    sprintf(buffer + j * 3, "%02x ", current[j]);
-                } else {
-                    sprintf(buffer + j * 3, "   ");
-                }
-            }
-            Logger::info("stevenhao", "%p: %s", current, buffer);
-        }
-    }
+//    /// 打印连续地址的二进制数据 拼接位char* 打印以16进制打印
+//    static void print_data(void* _base, size_t _size) {
+//        for(auto i = 0; i < _size; i += 16) {
+//            auto current = reinterpret_cast<char*>(_base) + i;
+//            char buffer[64] = {0};
+//            for(auto j = 0; j < 16; j++) {
+//                if(i + j < _size) {
+//                    sprintf(buffer + j * 3, "%02x ", current[j]);
+//                } else {
+//                    sprintf(buffer + j * 3, "   ");
+//                }
+//            }
+//            Logger::info("stevenhao", "%p: %s", current, buffer);
+//        }
+//    }
 
 
 

@@ -4,7 +4,7 @@
 
 #ifndef NDKLEARNING_MOCKMUTEX_H
 #define NDKLEARNING_MOCKMUTEX_H
-#include "../byopen/prefix.h"
+#include "jvmti/byopen/prefix.h"
 #include "locks.h"
 #include <stdint.h>
 #include <atomic>
