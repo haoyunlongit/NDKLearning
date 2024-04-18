@@ -27,6 +27,7 @@ target_link_libraries("jvmti"
 
 # 添加头文件路径
 target_include_directories("jvmti" PRIVATE
+        ${CMAKE_CURRENT_SOURCE_DIR}
         ${CMAKE_CURRENT_SOURCE_DIR/byopen})
 
 

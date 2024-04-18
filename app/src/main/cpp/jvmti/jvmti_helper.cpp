@@ -18,6 +18,7 @@
 #include <unordered_map>
 #include "mem_object_info.h"
 #include "jvmti_helper.h"
+#include "jvmti_utils.h"
 
 typedef void (*SetJdwpAllowedFunc)(bool);
 typedef bool (*IsJdwpAllowed)();
@@ -40,6 +41,18 @@ int index = 0;
 void ObjectAllocCallback(jvmtiEnv *jvmti, JNIEnv *jni,
                          jthread thread, jobject object,
                          jclass klass, jlong size) {
+
+    if (size > 100) {
+        // 获取 temp 对应的 jclass
+        jstring className = get_class_name(jni, object);
+        if (className == nullptr) {
+            JVMTI_Logger::info("stevenhao", "class null");
+            return;
+        }
+        char* class_name = (char*)jni->GetStringUTFChars(className, nullptr);
+        JVMTI_Logger::info("stevenhao", "class name %s", class_name);
+    }
+
     char *classSignature;
     jvmti->GetClassSignature(klass, &classSignature, nullptr);
     if (strcmp(classSignature, "Lcom/stevenhao/ndklearning/MyString;") == 0) {

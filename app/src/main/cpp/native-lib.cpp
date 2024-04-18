@@ -44,5 +44,30 @@ extern "C"
 JNIEXPORT void JNICALL
 Java_com_stevenhao_ndklearning_MainActivity_scanMemory(JNIEnv *env, jobject thiz) {
 
-//    baseJVMTI::print_jvm_object();
+// 获取 temp 对应的 jclass
+    jclass tempClass = env->GetObjectClass(thiz);
+    if (tempClass == NULL) {
+        Logger::info("stevenhao", "class null");
+        return;
+    }
+
+    const char * methordName22 = "getClass";
+    // 获取类名
+    jmethodID getNameMethodId = env->GetMethodID(tempClass, methordName22, "()Ljava/lang/Class;");
+    if (getNameMethodId == NULL) {
+        Logger::info("stevenhao", "method null");
+        return ;
+    }
+
+    jclass classObject = (jclass)env->CallObjectMethod(tempClass, getNameMethodId);
+    const char * methordName = "getName";
+    jmethodID getNameMethodId2 = env->GetMethodID(classObject, methordName, "()Ljava/lang/String;");
+    if (getNameMethodId2 == NULL) {
+        Logger::info("stevenhao", "method null");
+        return ;
+    }
+    jstring className = (jstring)env->CallObjectMethod(classObject, getNameMethodId2);
+
+    char *classNameStr = (char *)env->GetStringUTFChars(className, 0);
+    Logger::info("stevenhao", "class name Str %s", classNameStr);
 }

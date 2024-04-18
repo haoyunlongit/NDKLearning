@@ -1,5 +1,6 @@
 package com.stevenhao.ndklearning;
 
+import android.app.Activity;
 import android.content.Context;
 import android.os.Build;
 import android.os.Debug;
@@ -25,6 +26,7 @@ public class JVMHelper {
     //管理方便：将库文件放在应用的私有文件夹中，可以方便应用管理和使用这个库文件。例如，应用可以在需要时删除这个库文件，或者在更新应用时更新这个库文件。
     //兼容性：在某些情况下，直接使用库文件的原始路径可能会导致问题。例如，如果库文件位于外部存储设备上，那么当设备被卸载时，应用将无法访问库文件。将库文件复制到应用的私有文件夹中，可以避免这种问题。
     public static void init(Context context) {
+
         try {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                 packageCodePath = context.getPackageCodePath();
@@ -82,6 +84,7 @@ public class JVMHelper {
             Log.e("stevenhao", "init jvmti error" + ex.toString());
         }
     }
+
 
     static native boolean getGJdwpAllowed();
 

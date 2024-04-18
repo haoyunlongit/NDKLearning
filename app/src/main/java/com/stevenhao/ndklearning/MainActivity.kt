@@ -1,5 +1,6 @@
 package com.stevenhao.ndklearning
 
+import android.app.Activity
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
@@ -86,8 +87,13 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun createBigObject() {
+        val temp: Activity = this;
+        val tempclass: Class<*> = temp.javaClass
+        val nameString = tempclass.getName()
+        Log.e("stevenhao", "####nameString: $nameString")
         var MyString = MyString()
         bitObjectArray.add(MyString)
+        scanMemory();
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
@@ -108,8 +114,13 @@ class MainActivity : AppCompatActivity() {
     private external fun scanMemory()
 
     private fun initJVMTI() {
-        System.loadLibrary("ndk-starter")
-        JVMHelper.init(this);
+        val findLibrary =
+            ClassLoader::class.java.getDeclaredMethod("findLibrary", String::class.java)
+        val jvmtiAgentLibPath = findLibrary.invoke(classLoader, "ndk-starter") as String
+        System.load(jvmtiAgentLibPath)
+        JVMHelper.init(this)
+
+        var temp: String
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
