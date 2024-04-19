@@ -7,14 +7,21 @@
 
 #include "jvmti.h"
 
-struct ObjectInfo {
-    jthread thread;
+class ObjectInfo {
     jobject object;
     jclass klass;
     jlong size;
+    jvmtiFrameInfo *frames;
+
+public:
+    // 析构函数
+    ~ObjectInfo() {
+        JVMTI_Logger::info("stevenhao", "~~~~~~~~析构函数 ObjectInfo");
+        delete frames;
+    }
 
     // 构造函数
-    ObjectInfo(jthread thr, jobject obj, jclass cls, jlong sz)
-            : thread(thr), object(obj), klass(cls), size(sz) {}
+    ObjectInfo(jvmtiFrameInfo* frames, jobject obj, jclass cls, jlong sz)
+            : object(obj), klass(cls), size(sz), frames(frames){};
 };
 #endif //NDKLEARNING_MEM_OBJECT_INFO_H

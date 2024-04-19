@@ -90,7 +90,6 @@ class MainActivity : AppCompatActivity() {
         val temp: Activity = this;
         val tempclass: Class<*> = temp.javaClass
         val nameString = tempclass.getName()
-        Log.e("stevenhao", "####nameString: $nameString")
         var MyString = MyString()
         bitObjectArray.add(MyString)
         scanMemory();

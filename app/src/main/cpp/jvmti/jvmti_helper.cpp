@@ -28,7 +28,7 @@ static const char* TAG = "stevenhao";
 
 namespace {
     jvmtiEnv *g_jvmti = NULL;
-    static std::unordered_map<jlong, ObjectInfo> objectMap;
+    static std::unordered_map<jlong, ObjectInfo*> objectMap;
 }
 
 jvmtiEnv* CreateJvmtiEnv(JavaVM *vm);
@@ -36,36 +36,46 @@ void SetAllCapabilities(jvmtiEnv *jvmti);
 void SetEventNotification(jvmtiEnv *jvmti, jvmtiEventMode mode,
                           jvmtiEvent event_type);
 void ObjectFree(jvmtiEnv *jvmti_env, jlong tag);
-void addObjectInfo(jthread thread, jobject object, jclass klass, jlong size, jlong tag);
 
 int index = 0;
+thread_local bool threadLocalAllocBool = false;
 void ObjectAllocCallback(jvmtiEnv *jvmti, JNIEnv *jni,
                          jthread thread, jobject object,
                          jclass klass, jlong size) {
-
-    if (size > 100) {
-        // 获取 temp 对应的 jclass
-        jstring className = get_class_name(jni, object);
-        if (className == nullptr) {
-            JVMTI_Logger::info("stevenhao", "class null");
-            return;
-        }
-        char* class_name = (char*)jni->GetStringUTFChars(className, nullptr);
-        JVMTI_Logger::info("stevenhao", "class name %s", class_name);
+    if (threadLocalAllocBool) {
+        return;
     }
 
-    char *classSignature;
-    jvmti->GetClassSignature(klass, &classSignature, nullptr);
-    if (strcmp(classSignature, "Lcom/stevenhao/ndklearning/MyString;") == 0) {
-        // 这是一个大的MyString对象，打印信息
-        JVMTI_Logger::info("stevenhao", "Large MyString object allocated with size: %lld", size);
-
+    if (size > 1000) {
+        // 获取 temp 对应的 jclass
         jvmti->SetTag(object, index);
         index++;
-        addObjectInfo(thread, object, klass, size, index);
+
+        jvmtiFrameInfo *frames = new jvmtiFrameInfo[10];
+        jint count;
+        threadLocalAllocBool = true;
+        jvmtiError error = jvmti->GetStackTrace(thread, 0, 10, frames, &count);
+        threadLocalAllocBool = false;
+
+        if (error != JVMTI_ERROR_NONE) {
+            JVMTI_Logger::info("stevenhao", "GetStackTrace error %d", error);
+        } else {
+            ObjectInfo* objectInfo = new ObjectInfo(frames, object, klass, size);
+            objectMap.insert(std::make_pair(index, objectInfo));
+        }
     }
 
-    jvmti->Deallocate((unsigned char *) classSignature);
+}
+
+void ObjectFree(jvmtiEnv *jvmti_env, jlong tag) {
+    JVMTI_Logger::info("stevenhao", "执行 ObjectFree");
+    auto it = objectMap.find(tag);
+    if (it!= objectMap.end()) {  // 如果找到了键
+        delete it->second;
+        objectMap.erase(it);
+    } else {
+        JVMTI_Logger::info("stevenhao", "未找到 tag %d 对应的对象信息", tag);
+    }
 }
 
 void GCStartCallback(jvmtiEnv *jvmti) {
@@ -195,24 +205,6 @@ void baseJVMTI::set_gJdwpAllowed(int allowed) {
     JVMTI_Logger::info(TAG,"found SetJdwpAllowed symbol");
     funcPtr(allowed);
     by_dlclose(handle);
-}
-
-void addObjectInfo(jthread thread, jobject object, jclass klass, jlong size, jlong tag) {
-    ObjectInfo objInfo(thread, object, klass, size);
-
-    // 使用 insert_or_assign 来插入或更新键值对
-    objectMap.insert(std::make_pair(tag, objInfo));
-}
-
-// 从 objectMap 中移除对象信息
-void removeObject(jint tag) {
-    objectMap.erase(tag);
-    JVMTI_Logger::info("stevenhao", "~~~~~~~removeObject %d", tag);
-}
-
-void ObjectFree(jvmtiEnv *jvmti_env, jlong tag) {
-    JVMTI_Logger::info("stevenhao", "ObjectFree tag %i", tag);
-    removeObject(tag);
 }
 
 void baseJVMTI::print_jvm_object() {
