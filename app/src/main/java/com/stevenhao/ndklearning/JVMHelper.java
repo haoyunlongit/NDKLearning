@@ -21,12 +21,8 @@ import java.nio.file.Paths;
 public class JVMHelper {
     static String packageCodePath = "";
 
-    ///为什么复制
-    ////安全性：将库文件复制到应用的私有文件夹中，可以防止其他应用或用户访问或修改这个库文件，提高了应用的安全性。
-    //管理方便：将库文件放在应用的私有文件夹中，可以方便应用管理和使用这个库文件。例如，应用可以在需要时删除这个库文件，或者在更新应用时更新这个库文件。
-    //兼容性：在某些情况下，直接使用库文件的原始路径可能会导致问题。例如，如果库文件位于外部存储设备上，那么当设备被卸载时，应用将无法访问库文件。将库文件复制到应用的私有文件夹中，可以避免这种问题。
-    public static void init(Context context) {
-
+    public static boolean loadJvmtiAgent(Context context) {
+        boolean result = false;
         try {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                 packageCodePath = context.getPackageCodePath();
@@ -36,7 +32,7 @@ public class JVMHelper {
                 //copy lib to /data/data/com.dodola.jvmti/files/jvmti
                 if (jvmtiAgentLibPath == null) {
                     Log.e("stevenhao", "not find jvmtiAgentLibPath");
-                    return;
+                    return result;
                 }
 
                 Log.d("stevenhao", "jvmtiagentlibpath " + jvmtiAgentLibPath);
@@ -69,21 +65,30 @@ public class JVMHelper {
                         Log.d("stevenhao", "set gjdwp disallowed");
                         setGJdwpAllowed(false);
                     }
+                    result = true;
                 } else {
                     try {
                         Class vmDebugClazz = Class.forName("dalvik.system.VMDebug");
                         Method attachAgentMethod = vmDebugClazz.getMethod("attachAgent", String.class);
                         attachAgentMethod.setAccessible(true);
                         attachAgentMethod.invoke(null, agentLibSo.getAbsolutePath());
+                        result = true;
                     } catch (Exception ex) {
                         ex.printStackTrace();
+                        result = false;
                     }
                 }
             }
         } catch (Exception ex) {
             Log.e("stevenhao", "init jvmti error" + ex.toString());
+            result = false;
         }
+        return result;
     }
+
+
+
+    static native boolean initJvmtiAgent();
 
 
     static native boolean getGJdwpAllowed();

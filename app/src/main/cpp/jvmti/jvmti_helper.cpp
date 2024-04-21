@@ -5,10 +5,6 @@
 #include <jni.h>
 #include <bits/pthread_types.h>
 #include <android/log.h>
-#include <string.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <stdarg.h>
 #include <dlfcn.h>
 #include <sys/mman.h>
 #include <link.h>
@@ -48,9 +44,6 @@ void ObjectAllocCallback(jvmtiEnv *jvmti, JNIEnv *jni,
 
     if (size > 1000) {
         // 获取 temp 对应的 jclass
-        jvmti->SetTag(object, index);
-        index++;
-
         jvmtiFrameInfo *frames = new jvmtiFrameInfo[10];
         jint count;
         threadLocalAllocBool = true;
@@ -60,15 +53,32 @@ void ObjectAllocCallback(jvmtiEnv *jvmti, JNIEnv *jni,
         if (error != JVMTI_ERROR_NONE) {
             JVMTI_Logger::info("stevenhao", "GetStackTrace error %d", error);
         } else {
-            ObjectInfo* objectInfo = new ObjectInfo(frames, object, klass, size);
+            char* class_name;
+            jvmti->GetClassSignature(klass, &class_name, nullptr);
+
+            JVMTI_Logger::info("stevenhao", "add object %s", class_name);
+            jvmti->SetTag(object, index);
+            index++;
+            ObjectInfo* objectInfo = new ObjectInfo(frames,count, klass, size);
             objectMap.insert(std::make_pair(index, objectInfo));
         }
     }
 
 }
 
-void ObjectFree(jvmtiEnv *jvmti_env, jlong tag) {
-    JVMTI_Logger::info("stevenhao", "执行 ObjectFree");
+void print_frame(jvmtiFrameInfo *frames, jint count) {
+    for (int i = 0; i < count; i++) {
+        jmethodID jmethodId = frames[i].method;
+        char* methodName;
+        char *signature;
+        g_jvmti->GetMethodName(jmethodId, &methodName, &signature, nullptr);
+        JVMTI_Logger::info("stevenhao", "method name %s", signature);
+    }
+}
+
+void ObjectFree(jvmtiEnv *jvmti_env,
+                  jlong tag) {
+    JVMTI_Logger::info("stevenhao", "触发西沟函数%d", tag);
     auto it = objectMap.find(tag);
     if (it!= objectMap.end()) {  // 如果找到了键
         delete it->second;
@@ -85,6 +95,12 @@ void GCStartCallback(jvmtiEnv *jvmti) {
 
 void GCFinishCallback(jvmtiEnv *jvmti) {
     JVMTI_Logger::info("stevenhao","==========触发 GCFinish=======");
+    //// 打印所有对象信息
+//    for (auto it = objectMap.begin(); it != objectMap.end(); it++) {
+//        JVMTI_Logger::info("stevenhao","==========ObjectFree begin=======");
+//        print_frame(it->second->frames, it->second->frameSize);
+//        JVMTI_Logger::info("stevenhao","==========ObjectFree end=======");
+//    }
 }
 
 jint referenceCallback
@@ -107,31 +123,6 @@ extern "C" JNIEXPORT jint JNICALL Agent_OnAttach(JavaVM *vm, char *options,
     } else {
         JVMTI_Logger::info("stevenhao", "==========CreateJvmtiEnv success=======");
     }
-    SetAllCapabilities(g_jvmti);
-    jvmtiEventCallbacks callbacks;
-    memset(&callbacks, 0, sizeof(callbacks));
-
-    callbacks.VMObjectAlloc = &ObjectAllocCallback;
-    callbacks.ObjectFree = &ObjectFree;
-
-//    callbacks.NativeMethodBind = &JvmTINativeMethodBind;
-//
-    callbacks.GarbageCollectionStart = &GCStartCallback;
-    callbacks.GarbageCollectionFinish = &GCFinishCallback;
-    int error = g_jvmti->SetEventCallbacks(&callbacks, sizeof(callbacks));
-    JVMTI_Logger::info("stevenhao", "register error %d", error);
-    SetEventNotification(g_jvmti, JVMTI_ENABLE,
-                         JVMTI_EVENT_GARBAGE_COLLECTION_START);
-    SetEventNotification(g_jvmti, JVMTI_ENABLE,
-                         JVMTI_EVENT_GARBAGE_COLLECTION_FINISH);
-//    SetEventNotification(jvmti_env, JVMTI_ENABLE,
-//                         JVMTI_EVENT_NATIVE_METHOD_BIND);
-    SetEventNotification(g_jvmti, JVMTI_ENABLE,
-                         JVMTI_EVENT_VM_OBJECT_ALLOC);
-    SetEventNotification(g_jvmti, JVMTI_ENABLE,
-                         JVMTI_EVENT_OBJECT_FREE);
-//    SetEventNotification(jvmti_env, JVMTI_ENABLE,
-//                         JVMTI_EVENT_CLASS_FILE_LOAD_HOOK);
     JVMTI_Logger::info("stevenhao", "==========Agent_OnAttach=======");
     return JNI_OK;
 
@@ -211,4 +202,44 @@ void baseJVMTI::print_jvm_object() {
     for (auto &obj : objectMap) {
         JVMTI_Logger::info("stevenhao", "Object tag %d", obj.first);
     }
+}
+
+extern "C"
+JNIEXPORT jboolean JNICALL
+Java_com_stevenhao_ndklearning_JVMHelper_initJvmtiAgent(JNIEnv *env, jclass clazz) {
+
+    if (g_jvmti == nullptr) {
+        JVMTI_Logger::info("stevenhao", "==========CreateJvmtiEnv fail=======");
+        return JNI_FALSE;
+    } else {
+        JVMTI_Logger::info("stevenhao", "==========CreateJvmtiEnv success=======");
+    }
+
+    SetAllCapabilities(g_jvmti);
+    jvmtiEventCallbacks callbacks;
+    memset(&callbacks, 0, sizeof(callbacks));
+
+    callbacks.VMObjectAlloc = &ObjectAllocCallback;
+    callbacks.ObjectFree = &ObjectFree;
+
+//    callbacks.NativeMethodBind = &JvmTINativeMethodBind;
+//
+    callbacks.GarbageCollectionStart = &GCStartCallback;
+    callbacks.GarbageCollectionFinish = &GCFinishCallback;
+    int error = g_jvmti->SetEventCallbacks(&callbacks, sizeof(callbacks));
+    JVMTI_Logger::info("stevenhao", "register error %d", error);
+    SetEventNotification(g_jvmti, JVMTI_ENABLE,
+                         JVMTI_EVENT_GARBAGE_COLLECTION_START);
+    SetEventNotification(g_jvmti, JVMTI_ENABLE,
+                         JVMTI_EVENT_GARBAGE_COLLECTION_FINISH);
+//    SetEventNotification(jvmti_env, JVMTI_ENABLE,
+//                         JVMTI_EVENT_NATIVE_METHOD_BIND);
+    SetEventNotification(g_jvmti, JVMTI_ENABLE,
+                         JVMTI_EVENT_VM_OBJECT_ALLOC);
+    SetEventNotification(g_jvmti, JVMTI_ENABLE,
+                         JVMTI_EVENT_OBJECT_FREE);
+//    SetEventNotification(jvmti_env, JVMTI_ENABLE,
+//                         JVMTI_EVENT_CLASS_FILE_LOAD_HOOK);
+    JVMTI_Logger::info("stevenhao", "==========Agent_OnAttach=======");
+    return JNI_TRUE;
 }

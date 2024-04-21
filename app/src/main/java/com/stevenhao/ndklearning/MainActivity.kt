@@ -74,7 +74,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         binding.root.findViewById<View>(R.id.goto_setting_button_2).setOnClickListener {
-            scanMemory()
+            cleanBigObject()
         }
 
         binding.root.findViewById<View>(R.id.goto_setting_button_3).setOnClickListener {
@@ -87,12 +87,12 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun createBigObject() {
-        val temp: Activity = this;
-        val tempclass: Class<*> = temp.javaClass
-        val nameString = tempclass.getName()
         var MyString = MyString()
         bitObjectArray.add(MyString)
-        scanMemory();
+    }
+
+    fun cleanBigObject() {
+        bitObjectArray.clear()
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
@@ -114,7 +114,9 @@ class MainActivity : AppCompatActivity() {
 
     private fun initJVMTI() {
         System.loadLibrary("ndk-starter")
-        JVMHelper.init(this)
+        if (JVMHelper.loadJvmtiAgent(this)) {
+            JVMHelper.initJvmtiAgent()
+        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {

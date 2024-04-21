@@ -8,12 +8,12 @@
 #include "jvmti.h"
 
 class ObjectInfo {
-    jobject object;
+public:
     jclass klass;
     jlong size;
     jvmtiFrameInfo *frames;
+    int frameSize;
 
-public:
     // 析构函数
     ~ObjectInfo() {
         JVMTI_Logger::info("stevenhao", "~~~~~~~~析构函数 ObjectInfo");
@@ -21,7 +21,7 @@ public:
     }
 
     // 构造函数
-    ObjectInfo(jvmtiFrameInfo* frames, jobject obj, jclass cls, jlong sz)
-            : object(obj), klass(cls), size(sz), frames(frames){};
+    ObjectInfo(jvmtiFrameInfo* frames, jint frameSize, jclass cls, jlong sz)
+            : klass(cls), size(sz), frameSize(frameSize), frames(frames){};
 };
 #endif //NDKLEARNING_MEM_OBJECT_INFO_H
